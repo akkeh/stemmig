@@ -17,13 +17,13 @@ prtl_count = 10
 base_freq = 100
 
 N = (prtl_count+1) * base_freq
-interval = (3/2.0)
+interval = (1.07)
 
 diss_curve = [0, 0.7, 1, 0.9, 0.8, 0.6, 0.4, 0.2, 0.1, 0, 0, 0]
 
 def interp(perc):
-	u_val = diss_curve[int(perc_CB/10+1)]
-	d_val = diss_curve[int(perc_CB/10)]
+	u_val = diss_curve[int(perc/10+1)]
+	d_val = diss_curve[int(perc/10)]
 	val = d_val + ((u_val-d_val) * (perc/10-int(perc/10)))
 	return val
 	
