@@ -16,6 +16,83 @@ calculation of critical bandwith:
 aaname 1e partiaal als begintoon voor berekening correct??
 '''
 
+def normaliseer(i):
+	return np.multiply(i, 1.0/max(i))
+
+def rondaf(interv):
+	out = np.array([])	
+	for i in interv:
+		out = np.append(out, round(i*100)/100)
+	return out
+
+def present(val, lijst):
+	ret = 1
+	for i in lijst:
+		if val == i:
+			ret = 0
+	return ret
+
+def stem4(interv, toonaantal):
+	interv = rondaf(interv)
+	count = 0
+	index = 0
+	out = np.array([])
+	while count < round(toonaantal/2)+1:
+		if present(interv[index], out):
+			if interv[index] <= 1.5:
+				out = np.append(out, interv[index])
+				count+=1
+		index+=1
+	out = np.sort(out)
+	kwrt_rmt = np.array([])
+	count+=1
+	index=1
+	kwrt_rmt = np.append(kwrt_rmt, 2)
+	while count < toonaantal:
+		kwrt_rmt = 	np.append(kwrt_rmt, 2.0/out[index])
+		index+=1
+		count+=1
+	out = np.append(out, kwrt_rmt[::-1])
+	return out
+
+
+def stem3(interv, diss, toonaantal):
+	interv = rondaf(interv)
+	count = 0
+	index = 0
+	out = np.array([])
+	while count < toonaantal:
+		if present(interv[index], out):
+			out = np.append(out, interv[index])
+			count+=1
+		index+=1
+	return out
+'''
+def stem2(interv, diss, 7):    #input: gesorteerde interv en diss lijst
+	interv = rondaf(interv)
+	count = 0
+	index = 0
+	out = np.array([])
+	while count < toonaantal:
+
+		if interv[index] < 1.5:
+			out = np.append(out, interv[index])
+			count+=1
+		index+=1
+	return np.sort(out)	
+'''
+def stem(interv, diss, tres):	#input: gesorteerde interv en diss lijst
+	diss = normaliseer(diss)
+	index = 0
+	while diss[index] < tres:
+		index+=1
+	print index
+	interv = interv[0:index]
+	diss = diss[0:index]
+	
+	return np.sort(interv)
+
+
 def sorteer(interv, diss):
 	srt_int = np.array([])
 	srt_diss = np.array([])
@@ -23,9 +100,9 @@ def sorteer(interv, diss):
 	for ronde in range(len(interv)):	
 		index = 0
 		counter = 0
-		val = 0
+		val = 1000
 		for i in diss:
-			if i > val:
+			if i < val:
 				val = i
 				index = counter
 			counter+=1
@@ -33,8 +110,9 @@ def sorteer(interv, diss):
 		srt_diss = np.append(srt_diss, val)
 		interv = np.delete(interv, index)
 		diss = np.delete(diss, index)
-		print(len(diss))
 	return srt_int, srt_diss 
+
+
 
 def interp(perc):
 	diss_array = [0, 1, 1, 0.9, 0.8, 0.6, 0.4, 0.2, 0.1, 0, 0, 0]
