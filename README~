@@ -3,3 +3,10 @@ Door: Pjotr Lasschuit en Akke Houben
 
 Voor voorbeeld run in terminal (vanuit directory):
 	$ python voorbeeld.py
+
+Geluidsvoorbeelden:
+	voorbeeld.wav
+	gamelan.wav
+
+Code en updates op:
+	https://github.com/akkeh/stemmig
