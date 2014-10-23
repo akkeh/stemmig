@@ -32,7 +32,7 @@ def present(val, lijst):
 			ret = 0
 	return ret
 
-def stem1(interv, toonaantal):
+def stem_cp(interv, toonaantal):
 	interv = rondaf(interv)
 	count = 0
 	index = 0
@@ -55,7 +55,7 @@ def stem1(interv, toonaantal):
 	out = np.append(out, kwrt_rmt[::-1])
 	return out
 
-def stem2(interv, toonaantal):
+def stem2_cp(interv, toonaantal):
 	interv = rondaf(interv)
 	count = 0
 	index = 0

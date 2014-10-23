@@ -33,7 +33,7 @@ def present(val, lijst):
 				ret = 0
 	return ret
 
-def stem3(interv, toonaantal):
+def stem_dc(interv, toonaantal):
 	interv = rondaf(interv)
 	count = 0
 	index = 0

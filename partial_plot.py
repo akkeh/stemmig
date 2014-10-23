@@ -22,7 +22,7 @@ def present2(arr, val):
 	return aanw
 
 def p_plot(prtls, amplit):
-	ampl = np.arange(max(prtls)+1)
+	ampl = np.arange(max(prtls))
 	ampl.fill(0)
 	index = 0
 	prtl = 0
@@ -32,8 +32,8 @@ def p_plot(prtls, amplit):
 		ampl[i] = val
 		index+=1
 
-	plt.plot(range(int(max(prtls))+1), ampl)
-	plt.show()
+#	plt.plot(range(int(max(prtls))), ampl)
+#	plt.show()
 	return ampl
 
 
