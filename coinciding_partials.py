@@ -32,7 +32,7 @@ def present(val, lijst):
 			ret = 0
 	return ret
 
-def stem4(interv, toonaantal):
+def stem1(interv, toonaantal):
 	interv = rondaf(interv)
 	count = 0
 	index = 0
@@ -55,42 +55,21 @@ def stem4(interv, toonaantal):
 	out = np.append(out, kwrt_rmt[::-1])
 	return out
 
-
-def stem3(interv, diss, toonaantal):
+def stem2(interv, toonaantal):
 	interv = rondaf(interv)
 	count = 0
 	index = 0
 	out = np.array([])
-	while count < toonaantal:
+	while count < round(toonaantal)+1:
 		if present(interv[index], out):
 			out = np.append(out, interv[index])
 			count+=1
 		index+=1
+	out = np.sort(out)
+	kwrt_rmt = np.array([])
 	return out
-'''
-def stem2(interv, diss, 7):    #input: gesorteerde interv en diss lijst
-	interv = rondaf(interv)
-	count = 0
-	index = 0
-	out = np.array([])
-	while count < toonaantal:
 
-		if interv[index] < 1.5:
-			out = np.append(out, interv[index])
-			count+=1
-		index+=1
-	return np.sort(out)	
-'''
-def stem(interv, diss, tres):	#input: gesorteerde interv en diss lijst
-	diss = normaliseer(diss)
-	index = 0
-	while diss[index] < tres:
-		index+=1
-	print index
-	interv = interv[0:index]
-	diss = diss[0:index]
-	
-	return np.sort(interv)
+
 
 
 def sorteer(interv, coinc):
