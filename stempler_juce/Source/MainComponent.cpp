@@ -22,7 +22,6 @@ MainContentComponent::MainContentComponent()
     (*button1).setBounds(10, 10, 50, 20);
     addAndMakeVisible(button1);
     (*button1).addListener(this);
-
 }
 
 MainContentComponent::~MainContentComponent()
@@ -39,6 +38,9 @@ void MainContentComponent::paint (Graphics& g)
     g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
 }
 
+void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
+
+}
 void MainContentComponent::resized()
 {
     // This is called when the MainContentComponent is resized.

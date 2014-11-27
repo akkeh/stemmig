@@ -55,14 +55,4 @@ private:
 };
 
 
-class audyo : public AudioCallback {
-public:
-    audyo();
-    
-private:
-
-
-};
-
-
 #endif  // AUDIOCALLBACK_H_INCLUDED

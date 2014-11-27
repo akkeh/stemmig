@@ -18,7 +18,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public ButtonListener
+class MainContentComponent   : public Component, public ButtonListener, private AudioCallback
 {
 public:
     //==============================================================================
@@ -30,8 +30,8 @@ public:
 
 private:
     //==============================================================================
+    void audioCallback(float** buffer, int channels, int frames); 
     TextButton* button1;
-    audyo* audio;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
 
