@@ -27,7 +27,7 @@ public:
     void buttonClicked(Button* button);
     void paint (Graphics&);
     void resized();
-
+    float fs;
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames); 

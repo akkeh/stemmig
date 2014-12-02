@@ -22,6 +22,9 @@ MainContentComponent::MainContentComponent()
     (*button1).setBounds(10, 10, 50, 20);
     addAndMakeVisible(button1);
     (*button1).addListener(this);
+    this->startAudioCallback();
+    fs = getSampleRate();
+    std::cout<<fs<<std::endl;
 }
 
 MainContentComponent::~MainContentComponent()
@@ -39,7 +42,11 @@ void MainContentComponent::paint (Graphics& g)
 }
 
 void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
-
+    for(int chn = 0; chn<channels; chn++) {
+        for(int frms=0; frms<frames; frms++) {
+            buffer[chn][frms] = (float)(random() % 200 - 100)/100;
+        }
+    } 
 }
 void MainContentComponent::resized()
 {
