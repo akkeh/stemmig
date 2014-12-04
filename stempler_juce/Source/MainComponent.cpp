@@ -28,7 +28,7 @@ MainContentComponent::MainContentComponent()
     (*button1).setBounds(10, 10, 50, 20);
     addAndMakeVisible(button1);
     (*button1).addListener(this);
-    this->startAudioCallback();
+        
     fs = getSampleRate();
     std::cout<<fs<<std::endl;
     N = 0;
@@ -50,11 +50,14 @@ void MainContentComponent::paint (Graphics& g)
 }
 
 void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
+    int index = 0;
     for(int chn = 0; chn<channels; chn++) {
         for(int frms=0; frms<frames; frms++) {
-            buffer[chn][frms] = (float)(random() % 200 - 100)/100;
+            buffer[chn][frms] = buf[index];
+            index++;
         }
     } 
+    play_sound();
 }
 void MainContentComponent::resized()
 {
@@ -63,13 +66,28 @@ void MainContentComponent::resized()
     // update their positions.
 }
 
+int MainContentComponent::play_sound() {
+    for(int n=0; n<512*2; n++) {
+        buf[n] = (float)(rand() % 100)/100;;
+    }
+
+
+    //   (*read_ptr)++;   //increase read_ptr
+
+}
 
 int MainContentComponent::open_file(const juce::String filepath) {
 //    std::string fp = (const char*) filepath;
     int err = loadfile(filepath, data, &N, &ch, &fs);
     if(err == 0) {
         std::cout<<"opened: "<<filepath<<std::endl;
+        update_ptr();
+        play_sound();
+        this->startAudioCallback();
     } else {
         std::cout<<"\nFAILED TO LOAD FILE!\n";
     }
+}
+void MainContentComponent::update_ptr() {
+    read_ptr = data;
 }

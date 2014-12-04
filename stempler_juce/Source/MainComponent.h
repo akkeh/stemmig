@@ -30,7 +30,8 @@ public:
     void resized();
 private:
     //==============================================================================
-    void audioCallback(float** buffer, int channels, int frames); 
+    void audioCallback(float** buffer, int channels, int frames);
+    int play_sound();
     void playSine();
     int open_file(const juce::String filepath);
     double phase;
@@ -40,6 +41,10 @@ private:
     unsigned long int N;
     int ch;
     int fs;
+
+    float* read_ptr;
+    void update_ptr(); 
+    float buf[512*2];
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 
