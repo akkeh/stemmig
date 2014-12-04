@@ -28,7 +28,6 @@ public:
     void buttonClicked(Button* button);
     void paint (Graphics&);
     void resized();
-    float fs;
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames); 
@@ -37,8 +36,10 @@ private:
     double phase;
     TextButton* button1;
 
-    double* data;
+    float* data;
     unsigned long int N;
+    int ch;
+    int fs;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 

@@ -66,7 +66,7 @@ void MainContentComponent::resized()
 
 int MainContentComponent::open_file(const juce::String filepath) {
 //    std::string fp = (const char*) filepath;
-    int err = loadfile(filepath, data, N);
+    int err = loadfile(filepath, data, &N, &ch, &fs);
     if(err == 0) {
         std::cout<<"opened: "<<filepath<<std::endl;
     } else {
