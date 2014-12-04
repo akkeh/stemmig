@@ -8,13 +8,19 @@
 
 #include "MainComponent.h"
 #include "AudioCallback.h"
-
+#include "loadfile.h"
 
 //==============================================================================
 
 void MainContentComponent::buttonClicked(Button* button) {
-    
+
+     FileChooser myChooser ("I pitty the file who doesn't choose a fool!", File::getSpecialLocation(File::userHomeDirectory), "*.wav");
+    if(myChooser.browseForFileToOpen()) {
+        File wavFile (myChooser.getResult());
+        open_file(wavFile.getFullPathName());
+    }
 }
+
 MainContentComponent::MainContentComponent()
 {
     setSize (500, 400);
@@ -25,6 +31,8 @@ MainContentComponent::MainContentComponent()
     this->startAudioCallback();
     fs = getSampleRate();
     std::cout<<fs<<std::endl;
+    N = 0;
+    
 }
 
 MainContentComponent::~MainContentComponent()
@@ -53,4 +61,15 @@ void MainContentComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+}
+
+
+int MainContentComponent::open_file(const juce::String filepath) {
+//    std::string fp = (const char*) filepath;
+    int err = loadfile(filepath, data, N);
+    if(err == 0) {
+        std::cout<<"opened: "<<filepath<<std::endl;
+    } else {
+        std::cout<<"\nFAILED TO LOAD FILE!\n";
+    }
 }

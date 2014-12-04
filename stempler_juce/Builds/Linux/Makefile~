@@ -95,6 +95,13 @@ $(OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
 	@echo "Compiling Main.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/AudioCallback.o: ../../Source/AudioCallback.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling audiocallback!"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+
+
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_audio_basics.cpp"

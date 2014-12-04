@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioCallback.h"
+#include "loadfile.h"
 
 
 //==============================================================================
@@ -31,8 +32,16 @@ public:
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames); 
+    void playSine();
+    int open_file(const juce::String filepath);
+    double phase;
     TextButton* button1;
+
+    double* data;
+    unsigned long int N;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
+
 };
 
 
