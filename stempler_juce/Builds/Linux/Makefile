@@ -54,6 +54,7 @@ OBJECTS := \
   $(OBJDIR)/MainComponent_a6ffb4a5.o \
   $(OBJDIR)/Main_90ebc5c2.o \
   $(OBJDIR)/AudioCallback.o \
+  $(OBJDIR)/loadfile.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
@@ -100,6 +101,10 @@ $(OBJDIR)/AudioCallback.o: ../../Source/AudioCallback.cpp
 	@echo "Compiling audiocallback!"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/loadfile.o: ../../Source/loadfile.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling loadfool!"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp
