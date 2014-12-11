@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioCallback.h"
+#include <vector>
 #include "loadfile.h"
 
 
@@ -21,10 +22,13 @@
 */
 class note {
 public:
-	note(float* n_buf, long n_len);
+	note(float* n_buf, long n_len, int n_chn);
+	float get_samp();
+	bool del_me;
 private:
 	float* buffer;
 	long len;
+	int chn;
 	long read_p;
 };
 
@@ -40,6 +44,9 @@ public:
 
     void buttonClicked(Button* button);
 	void load_button();
+	void fill_buffer();
+
+	float* out_buf;
 
 	float* file_buf;	
 	long file_len;
@@ -48,6 +55,8 @@ public:
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames);
+	std::vector<note> notes;
+
     TextButton* load_but;
     TextButton* note_but;
 

@@ -9,6 +9,7 @@
 #include "MainComponent.h"
 #include "AudioCallback.h"
 #include "loadfile.h"
+#include <vector>
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
@@ -25,6 +26,7 @@ MainContentComponent::MainContentComponent()
     addAndMakeVisible(note_but);
     (*note_but).addListener(this);
 
+	out_buf = new float[512];
 
 }
 
@@ -36,8 +38,11 @@ MainContentComponent::~MainContentComponent()
 void MainContentComponent::buttonClicked(Button* button) {
     if(button == load_but) {
 		load_button();
+		fill_buffer();
+		this->startAudioCallback();
 	} else if (button == note_but) {
-
+		notes.push_back(note(file_buf, file_len, file_chn));
+		std::cout<<"notes: "<<notes.size()<<std::endl;
 	}
 }
 
@@ -54,9 +59,25 @@ void MainContentComponent::load_button() {
 
 }
 
+void MainContentComponent::fill_buffer() {
+	for(int i=0; i<notes.size(); i++) if(notes[i].del_me) notes.erase(notes.begin()+i);
+	for(long n=0; n<512; n++) {
+		out_buf[n] = 0;
+		for(int i=0; i<notes.size(); i++) {
+			out_buf[n]+=notes[i].get_samp();
+		}
+	}
+}
+
 
 void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
 
+	for(int c=0; c<channels; c++) {
+		for(long n=0; n<512; n++) {
+			buffer[c][n] = out_buf[n];
+		}		
+	}
+	fill_buffer();
 }
 
 
@@ -76,8 +97,22 @@ void MainContentComponent::resized()
     // update their positions.
 }
 
-note::note(float* n_buf, long n_len) {
+note::note(float* n_buf, long n_len, int n_chn) {
 	this->buffer = n_buf;
 	this->len = n_len;
+	this->chn = n_chn;
 	this->read_p = 0;
+	this->del_me = false;
+}
+
+float note::get_samp() {
+	float sample = 0;
+	if(read_p >= len) {
+		del_me = true;		
+	} else {
+		 sample = buffer[read_p];
+		read_p++;
+	}
+
+	return sample;
 }
