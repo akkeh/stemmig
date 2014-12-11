@@ -103,6 +103,7 @@ note::note(float* n_buf, long n_len, int n_chn) {
 	this->chn = n_chn;
 	this->read_p = 0;
 	this->del_me = false;
+	this->speed = 1.5;
 }
 
 float note::get_samp() {
@@ -110,8 +111,8 @@ float note::get_samp() {
 	if(read_p >= len) {
 		del_me = true;		
 	} else {
-		 sample = buffer[read_p];
-		read_p++;
+		sample = buffer[read_p];
+		read_p+=speed;
 	}
 
 	return sample;

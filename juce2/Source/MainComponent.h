@@ -29,7 +29,8 @@ private:
 	float* buffer;
 	long len;
 	int chn;
-	long read_p;
+	float read_p;
+	float speed;
 };
 
 class MainContentComponent   : public Component, public ButtonListener, private AudioCallback
