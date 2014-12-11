@@ -26,6 +26,9 @@ MainContentComponent::MainContentComponent()
     addAndMakeVisible(note_but);
     (*note_but).addListener(this);
 
+	addKeyListener(this);
+	setWantsKeyboardFocus(true);
+
 	out_buf = new float[512];
 
 }
@@ -80,6 +83,11 @@ void MainContentComponent::audioCallback(float** buffer, int channels, int frame
 	fill_buffer();
 }
 
+bool MainContentComponent::keyPressed(const KeyPress &key, Component *origin) {
+	notes.push_back(note(file_buf, file_len, file_chn));
+	std::cout<<"notes: "<<notes.size()<<std::endl;
+}
+
 
 void MainContentComponent::paint (Graphics& g)
 {
@@ -103,7 +111,7 @@ note::note(float* n_buf, long n_len, int n_chn) {
 	this->chn = n_chn;
 	this->read_p = 0;
 	this->del_me = false;
-	this->speed = 1.5;
+	this->speed = 1 + ((float)(rand() % 100)/100);
 }
 
 float note::get_samp() {

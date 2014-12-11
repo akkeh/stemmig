@@ -33,7 +33,7 @@ private:
 	float speed;
 };
 
-class MainContentComponent   : public Component, public ButtonListener, private AudioCallback
+class MainContentComponent   : public Component, public ButtonListener, private AudioCallback, public KeyListener
 {
 public:
     //==============================================================================
@@ -56,6 +56,7 @@ public:
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames);
+	bool keyPressed(const KeyPress &key, Component* origin);
 	std::vector<note> notes;
 
     TextButton* load_but;
