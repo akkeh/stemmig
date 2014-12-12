@@ -9,7 +9,9 @@
 #include "MainComponent.h"
 #include "AudioCallback.h"
 #include "loadfile.h"
+#include "stempler.h"
 #include <vector>
+#include <fftw3.h>
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
@@ -21,31 +23,38 @@ MainContentComponent::MainContentComponent()
     addAndMakeVisible(load_but);
     (*load_but).addListener(this);
     
-    note_but = new TextButton(("noot"));
-    (*note_but).setBounds(100, 10, 50, 20);
-    addAndMakeVisible(note_but);
-    (*note_but).addListener(this);
+    calc_but = new TextButton(("Calc."));
+    (*calc_but).setBounds(100, 10, 50, 20);
+    addAndMakeVisible(calc_but);
+    (*calc_but).addListener(this);
 
 	addKeyListener(this);
 	setWantsKeyboardFocus(true);
 
 	out_buf = new float[512];
+	
+	key_count = 7;								// amount of notes in tuning (per octave?) 	<-- maak een slider voor keuze aantal tonen?
+	mirror_tuning = true;						// invert intervals around 3/2				<-- maak schakelaar voor keuze inverteren?
+	peak_tresh = 0.01;							// peakdetection treshold					<--	maak een slider/draaiknop voor treshold?
+
 
 }
 
 MainContentComponent::~MainContentComponent()
 {
+	std::cout<<"will cleanup fftw\n";
+	fftw_destroy_plan(p);												// free memory:
+	fftw_free(in); fftw_free(out); 
+
     deleteAllChildren();
 }
 
 void MainContentComponent::buttonClicked(Button* button) {
     if(button == load_but) {
 		load_button();
-		fill_buffer();
 		this->startAudioCallback();
-	} else if (button == note_but) {
-		notes.push_back(note(file_buf, file_len, file_chn));
-		std::cout<<"notes: "<<notes.size()<<std::endl;
+	} else if (button == calc_but) {
+		calc_tuning();
 	}
 }
 
@@ -62,30 +71,79 @@ void MainContentComponent::load_button() {
 
 }
 
-void MainContentComponent::fill_buffer() {
+void MainContentComponent::calc_tuning() {								//calculate tuning
+
+	//initialise fft i/o-buffers:									
+	in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * file_len);
+	out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * file_len);
+	p = fftw_plan_dft_1d(file_len, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+	for(long n=0; n<file_len; n++) {									// fill fft input buffer:
+		in[n][0] = file_buf[n];		//	real part
+		in[n][1] = 0;				//	imag part
+	}
+	fftw_execute(p);													// execute fft
+
+	file_mX = new float[file_len];										//get mag and phase:
+	file_pX = new float[file_len];
+	for(long n=0; n<file_len/2; n++) {
+		file_mX[n] = c_abs(out[n][0], out[n][1]);
+		file_pX[n] = c_arg(out[n][0], out[n][1]);
+/*
+		std::cout<<"magnitude: "<<file_mX[n];
+		std::cout<<"\tphase: "<<file_pX[n]<<std::endl;
+*/
+	}
+		fftw_destroy_plan(p);
+	fftw_free(in); fftw_free(out); 
+	ladder = new tuning(file_mX, file_len/2, key_count, mirror_tuning, peak_tresh);	//(spectrum, length of spectrum (N/2 because off symmetry),
+																					//	amount of keys, mirror intervals round 3/2?, 
+																					//		peak detection treshold)  
+	
+
+}
+
+void MainContentComponent::fill_buffer(int bufsize) {
 	for(int i=0; i<notes.size(); i++) if(notes[i].del_me) notes.erase(notes.begin()+i);
-	for(long n=0; n<512; n++) {
+	for(long n=0; n<bufsize; n++) {
 		out_buf[n] = 0;
 		for(int i=0; i<notes.size(); i++) {
-			out_buf[n]+=notes[i].get_samp();
+			out_buf[n]+=notes[i].get_samp();							// query note for samples
 		}
 	}
 }
 
 
 void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
-
+	fill_buffer(frames);
 	for(int c=0; c<channels; c++) {
 		for(long n=0; n<512; n++) {
 			buffer[c][n] = out_buf[n];
 		}		
 	}
-	fill_buffer();
+	
 }
 
 bool MainContentComponent::keyPressed(const KeyPress &key, Component *origin) {
-	notes.push_back(note(file_buf, file_len, file_chn));
-		std::cout<<"notes: "<<notes.size()<<std::endl;
+	float speed = 1;
+	if(key == 'a') {			//1
+		std::cout<<"aaaah!\n";
+		speed = 1;
+	} else if(key == 's') {		//2
+		speed = 9.0/8;
+	} else if(key == 'd') {		//3
+		speed = 9.0/8*9.0/8;
+	} else if(key == 'f') {		//4
+		speed = 4.0/3;
+	} else if(key == 'g') {		//5
+		speed = 3.0/2;
+	} else if(key == 'h') {		//6
+		speed = 3.0/2*9.0/8;
+	} else if(key == 'j') {		//7
+		speed = 3.0/2*9.0/8;
+	}
+
+	notes.push_back(note(file_buf, file_len, file_chn, speed));
+	std::cout<<"notes: "<<notes.size()<<std::endl;
 }
 
 
@@ -105,13 +163,13 @@ void MainContentComponent::resized()
     // update their positions.
 }
 
-note::note(float* n_buf, long n_len, int n_chn) {
+note::note(float* n_buf, long n_len, int n_chn, float n_speed) {
 	this->buffer = n_buf;
 	this->len = n_len;
 	this->chn = n_chn;
 	this->read_p = 0;
 	this->del_me = false;
-	this->speed = 1 + ((float)(rand() % 100)/100);
+	this->speed = n_speed;
 }
 
 float note::get_samp() {

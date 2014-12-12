@@ -13,6 +13,8 @@
 #include "AudioCallback.h"
 #include <vector>
 #include "loadfile.h"
+#include "stempler.h"
+#include <fftw3.h>
 
 
 //==============================================================================
@@ -22,7 +24,7 @@
 */
 class note {
 public:
-	note(float* n_buf, long n_len, int n_chn);
+	note(float* n_buf, long n_len, int n_chn, float n_speed);
 	float get_samp();
 	bool del_me;
 private:
@@ -45,13 +47,25 @@ public:
 
     void buttonClicked(Button* button);
 	void load_button();
-	void fill_buffer();
+	void fill_buffer(int bufsize);
+	void calc_tuning();
 
 	float* out_buf;
 
 	float* file_buf;	
 	long file_len;
 	int file_chn;
+
+	float* file_mX;
+	float* file_pX;
+
+	fftw_complex *in, *out;												
+	fftw_plan p;	
+
+	tuning* ladder;
+	int key_count;
+	bool mirror_tuning;
+	float peak_tresh;
 
 private:
     //==============================================================================
@@ -60,7 +74,7 @@ private:
 	std::vector<note> notes;
 
     TextButton* load_but;
-    TextButton* note_but;
+    TextButton* calc_but;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

@@ -6,6 +6,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "loadfile.h"
 
+
+
 float* load_file(const juce::String filepath, long* length, int* chn){
     SF_INFO in_info;
     SNDFILE* in_file;
@@ -45,9 +47,13 @@ float* load_file(const juce::String filepath, long* length, int* chn){
     unsigned long int frames_read = sf_readf_float(in_file, buffer, num_frames);
     printf("read %li frames form file\n", frames_read);
 
+	float* out_buf = new float[num_frames*chn_num];
+	for(long n=0; n<num_frames*chn_num; n++) {
+		out_buf[n] = buffer[n];
+	}
  
     sf_close(in_file);
 	*length = num_frames;
 	*chn = chn_num;
-    return buffer;
+    return out_buf;
 }
