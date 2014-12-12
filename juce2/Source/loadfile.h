@@ -3,7 +3,7 @@
 #ifndef LOADF_H_
 #define LOADF_H_
 
-float* load_file(const juce::String filepath, long* length, int* chn);
+float* load_file(const juce::String filepath, long* length, int* chn, int* f_fs);
 
 
 

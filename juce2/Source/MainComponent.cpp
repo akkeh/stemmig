@@ -58,9 +58,10 @@ void MainContentComponent::load_button() {
 	FileChooser myChooser ("I pitty the file who doesn't choose a fool!", File::getSpecialLocation(File::userHomeDirectory), "*.wav");
         if(myChooser.browseForFileToOpen()) {
             File wavFile (myChooser.getResult());
-			long length_of_file; int channels;
-            float* data = load_file(wavFile.getFullPathName(), &length_of_file, &channels);
+			long length_of_file; int channels, f_fs;
+            float* data = load_file(wavFile.getFullPathName(), &length_of_file, &channels, &f_fs);
 			file_buf = data;
+			file_fs = f_fs;
 			file_len = length_of_file;
 			file_chn = channels;
         }
@@ -91,9 +92,9 @@ void MainContentComponent::calc_tuning() {								//calculate tuning
 	}
 		fftw_destroy_plan(p);
 	fftw_free(in); fftw_free(out); 
-	ladder = new tuning(file_mX, file_len/2, key_count, mirror_tuning, peak_tresh);	//(spectrum, length of spectrum (N/2 because off symmetry),
-																					//	amount of keys, mirror intervals round 3/2?, 
-																					//		peak detection treshold)  
+	ladder = new tuning(file_mX, file_len/2, key_count, mirror_tuning, peak_tresh, file_fs);	//(spectrum, length of spectrum (N/2 ivm symmetrie),
+																								//	amount of keys, mirror intervals round 3/2?, 
+																								//		peak detection treshold)  
 	
 
 }

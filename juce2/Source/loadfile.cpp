@@ -8,7 +8,7 @@
 
 
 
-float* load_file(const juce::String filepath, long* length, int* chn){
+float* load_file(const juce::String filepath, long* length, int* chn, int* f_fs){
     SF_INFO in_info;
     SNDFILE* in_file;
 
@@ -38,7 +38,7 @@ float* load_file(const juce::String filepath, long* length, int* chn){
 
     unsigned long int num_frames = in_info.frames;
     unsigned int chn_num = in_info.channels;
-
+	int fs = in_info.samplerate;
 
     printf("num_frames: %li\n", num_frames);
     printf("channels: %i\n", chn_num);
@@ -53,6 +53,7 @@ float* load_file(const juce::String filepath, long* length, int* chn){
 	}
  
     sf_close(in_file);
+	*f_fs = fs;
 	*length = num_frames;
 	*chn = chn_num;
     return out_buf;
