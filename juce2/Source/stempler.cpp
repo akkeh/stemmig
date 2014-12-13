@@ -11,6 +11,7 @@ tuning::tuning(float* mX, long N, int n_keys, bool mirror, float tresh, int f_fs
 			//std::cout<<"bin: "<<k<<" val: "<<peaks[k]<<std::endl;
 		}
 	}
+	
 	long len;
 	float** diss_curve = dissonance_curve(peaks, N, f_fs, &len);	//	2: calculate dissonance-curve
 	for(long i=0; i<len; i++) {
@@ -43,7 +44,7 @@ float** tuning::dissonance_curve(float* peaks, long N, int f_fs, long* len) {
 	for(long k=1; k<N/2; k++) band_diss[k] = 0;	
 	for(long k=1; k<N/2; k++) {		
 		if(peaks[k] > 0) {
-			int ERB = calc_ERB(k, f_fs, N)
+			int ERB = calc_ERB(k, f_fs, N);
 			for(int i=0; i<ERB; i++) {
 				band_diss[k-i]+=peaks[k]*diss_curve_interp(100/ERB * i);
 				band_diss[k+i]+=peaks[k]*diss_curve_interp(100/ERB * i);
@@ -60,13 +61,16 @@ float** tuning::dissonance_curve(float* peaks, long N, int f_fs, long* len) {
 	int index = 0;
 	for(float interv=1; interv<2; interv+=(0.5*(float)calc_ERB(interv, f_fs, N))) {
 		diss_curve[index] = 0;
-		for(long n=0; n<(N+calc_ERB(N, f_fs, N))*2); n++) {				//	-	band_diss[] will be static, peaks will move against it
+		for(long n=0; n<(N+calc_ERB(N, f_fs, N))*2; n++) {				//	-	band_diss[] will be static, peaks will move against it
 			if((n-(int)interv) >= 0) diss_curve[index]+=band_diss[n]*peaks[n-(int)interv];
 		}
 		intervals[index] = interv;
 		index++;
 	}															
-	float** diss_per_interv = new float[diss_curve_len][2];
+	float** diss_per_interv = new float*[diss_curve_len];
+	for(long i=0; i<diss_curve_len; i++) {
+		diss_per_interv[i] = new float[2];
+	}
 	for(int i=0; i<diss_curve_len; i++) {
 		diss_per_interv[i][0] = intervals[i];
 		diss_per_interv[i][1] = diss_curve[i];
