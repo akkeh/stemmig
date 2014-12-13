@@ -15,12 +15,16 @@ private:
 
 class tuning {
 public:
-	tuning(float* mX, long N, int keys, bool mirror);
+	tuning(float* mX, long N, int keys, bool mirror, float tresh, int f_fs);
 	float get_key(int which_key);
 private:
 	std::vector<key> keys;
 	float* get_peaks(float* mX, long N, bool smooth, float tresh);
+	int calc_ERB(long bin, int fs, long N);
+	float** dissonance_curve(float* peaks, long N, int f_fs);
 };
+
+
 
 
 // common complex procedures:

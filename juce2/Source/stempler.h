@@ -21,7 +21,7 @@ private:
 	std::vector<key> keys;
 	float* get_peaks(float* mX, long N, bool smooth, float tresh);
 	int calc_ERB(long bin, int fs, long N);
-	float* dissonance_curve(float* peaks, long N, int f_fs);
+	float** dissonance_curve(float* peaks, long N, int f_fs, long* len);
 };
 
 
