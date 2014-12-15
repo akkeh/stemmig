@@ -13,10 +13,12 @@ tuning::tuning(float* mX, long N, int n_keys, bool mirror, float tresh, int f_fs
 	}
 	
 	long len;
+	/*
 	float** diss_curve = dissonance_curve(peaks, N, f_fs, &len);	//	2: calculate dissonance-curve
 	for(long i=0; i<len; i++) {
 		std::cout<<"interval: "<<diss_curve[i][0]<<" dissonance: "<<diss_curve[i][1]<<std::endl;
 	}
+	*/
 			
 										//	3: sort intervals on amount of dissonance
 										//	4: distill tuning from dissonance curve, n_keys and mirror
@@ -61,7 +63,7 @@ float** tuning::dissonance_curve(float* peaks, long N, int f_fs, long* len) {
 	int index = 0;
 	for(float interv=1; interv<2; interv+=(0.5*(float)calc_ERB(interv, f_fs, N))) {
 		diss_curve[index] = 0;
-		for(long n=0; n<(N+calc_ERB(N, f_fs, N)*2); n++) {				//	-	band_diss[] will be static, peaks will move against it
+		for(long n=0; n<(N+calc_ERB(N, f_fs, N))*2; n++) {				//	-	band_diss[] will be static, peaks will move against it
 			if((n-(int)interv) >= 0) diss_curve[index]+=band_diss[n]*peaks[n-(int)interv];
 		}
 		intervals[index] = interv;

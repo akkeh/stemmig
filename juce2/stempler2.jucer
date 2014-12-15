@@ -5,6 +5,8 @@
               jucerVersion="3.1.0">
   <MAINGROUP id="Kih7Ef" name="stempler2">
     <GROUP id="{D72A5DCE-5A58-C83C-CF57-CA0E2C005281}" name="Source">
+      <FILE id="Mhr7rd" name="stempler.cpp" compile="1" resource="0" file="Source/stempler.cpp"/>
+      <FILE id="MoTQ0G" name="stempler.h" compile="0" resource="0" file="Source/stempler.h"/>
       <FILE id="VHe4zo" name="loadfile.h" compile="0" resource="0" file="Source/loadfile.h"/>
       <FILE id="ljkkTG" name="loadfile.cpp" compile="1" resource="0" file="Source/loadfile.cpp"/>
       <FILE id="AzIgwi" name="AudioCallback.cpp" compile="1" resource="0"
@@ -17,7 +19,7 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/Linux" externalLibraries="sndfile">
+    <LINUX_MAKE targetFolder="Builds/Linux" externalLibraries="sndfile&#10;fftw3&#10;m">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
                        targetName="stempler2"/>

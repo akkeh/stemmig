@@ -13,11 +13,19 @@
 //==============================================================================
 
 void MainContentComponent::buttonClicked(Button* button) {
+    if(button == button1) {
+         FileChooser myChooser ("I pitty the file who doesn't choose a fool!", File::getSpecialLocation(File::userHomeDirectory), "*.wav");
+        if(myChooser.browseForFileToOpen()) {
+            File wavFile (myChooser.getResult());
+            open_file(wavFile.getFullPathName());
+        }
+    } else if (button == button2) {
+		std::cout<<"length: "<<N<<std::endl;
 
-     FileChooser myChooser ("I pitty the file who doesn't choose a fool!", File::getSpecialLocation(File::userHomeDirectory), "*.wav");
-    if(myChooser.browseForFileToOpen()) {
-        File wavFile (myChooser.getResult());
-        open_file(wavFile.getFullPathName());
+        notes.push_back(note(sample));
+		notes[notes.size()-1].set_length(N);
+
+		for(int n=0; n<notes.size(); n++) std::cout<<"note: "<<n<<" len: "<<notes[n].get_len()<<std::endl;
     }
 }
 
@@ -28,11 +36,17 @@ MainContentComponent::MainContentComponent()
     (*button1).setBounds(10, 10, 50, 20);
     addAndMakeVisible(button1);
     (*button1).addListener(this);
-        
+    
+    button2 = new TextButton(("noot"));
+    (*button2).setBounds(100, 100, 50, 20);
+    addAndMakeVisible(button2);
+    (*button2).addListener(this);
+
+    
     fs = getSampleRate();
     std::cout<<fs<<std::endl;
     N = 0;
-    
+    	
 }
 
 MainContentComponent::~MainContentComponent()
@@ -53,11 +67,10 @@ void MainContentComponent::audioCallback(float** buffer, int channels, int frame
     int index = 0;
     for(int chn = 0; chn<channels; chn++) {
         for(int frms=0; frms<frames; frms++) {
-            buffer[chn][frms] = buf[index];
-            index++;
+            buffer[chn][frms] = buf[frms];
         }
-    } 
-    play_sound();
+    }
+    fill_buf();
 }
 void MainContentComponent::resized()
 {
@@ -66,9 +79,21 @@ void MainContentComponent::resized()
     // update their positions.
 }
 
-int MainContentComponent::play_sound() {
-    for(int n=0; n<512*2; n++) {
-        buf[n] = (float)(rand() % 100)/100;;
+int MainContentComponent::fill_buf() {
+    for(int n=0; n<512; n++) {
+        buf[n] = 0;             // clear buf
+    }
+	if(notes.size() > 0)	std::cout<<"notes: "<<notes.size()<<std::endl;
+    for(int nts=0; nts=notes.size(); nts++) {
+        if(notes[nts].del()){
+			std::cout<<"deleting "<<nts<<" was len: "<<notes[nts].get_len()<<std::endl;
+             notes.erase(notes.begin()+nts);
+        } else {
+			int towrite = notes[nts].towrite(512);
+			for(int n=0; n<towrite; n++) {
+	            buf[n]+=data[notes[nts].get_read_p(n)];
+			}
+        }
     }
 
 
@@ -78,16 +103,47 @@ int MainContentComponent::play_sound() {
 
 int MainContentComponent::open_file(const juce::String filepath) {
 //    std::string fp = (const char*) filepath;
-    int err = loadfile(filepath, data, &N, &ch, &fs);
-    if(err == 0) {
-        std::cout<<"opened: "<<filepath<<std::endl;
-        update_ptr();
-        play_sound();
-        this->startAudioCallback();
-    } else {
-        std::cout<<"\nFAILED TO LOAD FILE!\n";
+	sample = loadfile(filepath);
+	N = sample.N;
+	data = sample.data;
+	std::cout<<"opened: "<<N<<" samples of: "<<filepath<<std::endl;
+
+    fill_buf(); 
+    this->startAudioCallback();
+}
+
+note::note(samp sample) {
+    std::cout<<"length: "<<sample.N<<"\n"; 
+    std::cout<<"channels: "<<sample.chn<<"\n"; 
+    read_p = 0;
+    N = sample.N;
+
+}
+
+int note::towrite(int buflen) {
+	if((this->N-read_p) < buflen) {
+		return this->N-read_p;
+	} else {
+		return buflen;
+	}
+}
+
+void note::set_length(long len) {
+	this->N = len;
+}
+int note::get_read_p(int n) {
+	read_p++;
+	return read_p;
+}
+
+bool note::del() {
+    if (read_p < this->N) {
+        return false;
+    } else { 
+        return true;
     }
 }
-void MainContentComponent::update_ptr() {
-    read_ptr = data;
+
+long note::get_len() {
+	return N;
 }

@@ -60,8 +60,7 @@ public:
 	float* file_mX;
 	float* file_pX;
 
-	fftw_complex *in, *out;												
-	fftw_plan p;	
+	
 
 	tuning* ladder;
 	int key_count;

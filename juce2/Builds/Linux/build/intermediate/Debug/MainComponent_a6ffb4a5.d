@@ -445,4 +445,5 @@ build/intermediate/Debug/MainComponent_a6ffb4a5.o: \
  ../../Source/../JuceLibraryCode/modules/juce_video/playback/juce_DirectShowComponent.h \
  ../../Source/../JuceLibraryCode/modules/juce_video/playback/juce_QuickTimeMovieComponent.h \
  ../../Source/../JuceLibraryCode/modules/juce_video/capture/juce_CameraDevice.h \
- ../../Source/AudioCallback.h ../../Source/loadfile.h
+ ../../Source/AudioCallback.h ../../Source/loadfile.h \
+ ../../Source/stempler.h

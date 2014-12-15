@@ -13,10 +13,12 @@ tuning::tuning(float* mX, long N, int n_keys, bool mirror, float tresh, int f_fs
 	}
 	
 	long len;
+	
 	float** diss_curve = dissonance_curve(peaks, N, f_fs, &len);	//	2: calculate dissonance-curve
 	for(long i=0; i<len; i++) {
 		std::cout<<"interval: "<<diss_curve[i][0]<<" dissonance: "<<diss_curve[i][1]<<std::endl;
 	}
+	
 			
 										//	3: sort intervals on amount of dissonance
 										//	4: distill tuning from dissonance curve, n_keys and mirror

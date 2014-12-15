@@ -443,4 +443,6 @@ build/intermediate/Debug/loadfile.o: ../../Source/loadfile.cpp \
  ../../Source/../JuceLibraryCode/modules/juce_video/../juce_gui_extra/juce_gui_extra.h \
  ../../Source/../JuceLibraryCode/modules/juce_video/playback/juce_DirectShowComponent.h \
  ../../Source/../JuceLibraryCode/modules/juce_video/playback/juce_QuickTimeMovieComponent.h \
- ../../Source/../JuceLibraryCode/modules/juce_video/capture/juce_CameraDevice.h
+ ../../Source/../JuceLibraryCode/modules/juce_video/capture/juce_CameraDevice.h \
+ ../../Source/loadfile.h ../../Source/MainComponent.h \
+ ../../Source/AudioCallback.h

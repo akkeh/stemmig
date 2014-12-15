@@ -14,6 +14,20 @@
 #include "loadfile.h"
 
 
+class note {
+public:
+	int towrite(int buflen);
+	void set_length(long len);
+	int get_read_p(int n);
+	long get_len();
+    note(samp sample);
+    bool del();
+private:
+    unsigned long int read_p;
+    unsigned long int N;
+
+};
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -28,27 +42,34 @@ public:
     void buttonClicked(Button* button);
     void paint (Graphics&);
     void resized();
+    
 private:
     //==============================================================================
     void audioCallback(float** buffer, int channels, int frames);
-    int play_sound();
-    void playSine();
+    int fill_buf();
+    void add_note();
     int open_file(const juce::String filepath);
     double phase;
     TextButton* button1;
+    TextButton* button2;
 
+	samp sample;
     float* data;
     unsigned long int N;
     int ch;
     int fs;
 
-    float* read_ptr;
+    int read_p;
     void update_ptr(); 
-    float buf[512*2];
+    float buf[512];
+
+    std::vector<note> notes;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 
 };
+
+
 
 
 #endif  // MAINCOMPONENT_H_INCLUDED

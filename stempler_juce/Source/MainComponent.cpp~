@@ -1,0 +1,149 @@
+/*
+  ==============================================================================
+
+    This file was auto-generated!
+
+  ==============================================================================
+*/
+
+#include "MainComponent.h"
+#include "AudioCallback.h"
+#include "loadfile.h"
+
+//==============================================================================
+
+void MainContentComponent::buttonClicked(Button* button) {
+    if(button == button1) {
+         FileChooser myChooser ("I pitty the file who doesn't choose a fool!", File::getSpecialLocation(File::userHomeDirectory), "*.wav");
+        if(myChooser.browseForFileToOpen()) {
+            File wavFile (myChooser.getResult());
+            open_file(wavFile.getFullPathName());
+        }
+    } else if (button == button2) {
+		std::cout<<"length: "<<N<<std::endl;
+
+        notes.push_back(note(sample));
+		notes[notes.size()-1].set_length(N)
+
+		for(int n=0; n<notes.size(); n++) std::cout<<"note: "<<n<<" len: "<<notes[n].get_len()<<std::endl;
+    }
+}
+
+MainContentComponent::MainContentComponent()
+{
+    setSize (500, 400);
+    button1 = new TextButton(("play"));
+    (*button1).setBounds(10, 10, 50, 20);
+    addAndMakeVisible(button1);
+    (*button1).addListener(this);
+    
+    button2 = new TextButton(("noot"));
+    (*button2).setBounds(100, 100, 50, 20);
+    addAndMakeVisible(button2);
+    (*button2).addListener(this);
+
+    
+    fs = getSampleRate();
+    std::cout<<fs<<std::endl;
+    N = 0;
+    	
+}
+
+MainContentComponent::~MainContentComponent()
+{
+    deleteAllChildren();
+}
+
+void MainContentComponent::paint (Graphics& g)
+{
+    g.fillAll (Colour (0xffeeddff));
+
+    g.setFont (Font (16.0f));
+    g.setColour (Colours::black);
+    g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
+}
+
+void MainContentComponent::audioCallback(float** buffer, int channels, int frames) {
+    int index = 0;
+    for(int chn = 0; chn<channels; chn++) {
+        for(int frms=0; frms<frames; frms++) {
+            buffer[chn][frms] = buf[frms];
+        }
+    }
+    fill_buf();
+}
+void MainContentComponent::resized()
+{
+    // This is called when the MainContentComponent is resized.
+    // If you add any child components, this is where you should
+    // update their positions.
+}
+
+int MainContentComponent::fill_buf() {
+    for(int n=0; n<512; n++) {
+        buf[n] = 0;             // clear buf
+    }
+	if(notes.size() > 0)	std::cout<<"notes: "<<notes.size()<<std::endl;
+    for(int nts=0; nts=notes.size(); nts++) {
+        if(notes[nts].del()){
+			std::cout<<"deleting "<<nts<<" was len: "<<notes[nts].get_len()<<std::endl;
+             notes.erase(notes.begin()+nts);
+        } else {
+			int towrite = notes[nts].towrite(512);
+			for(int n=0; n<towrite; n++) {
+	            buf[n]+=data[notes[nts].get_read_p(n)];
+			}
+        }
+    }
+
+
+    //   (*read_ptr)++;   //increase read_ptr
+
+}
+
+int MainContentComponent::open_file(const juce::String filepath) {
+//    std::string fp = (const char*) filepath;
+	sample = loadfile(filepath);
+	N = sample.N;
+	data = sample.data;
+	std::cout<<"opened: "<<N<<" samples of: "<<filepath<<std::endl;
+
+    fill_buf(); 
+    this->startAudioCallback();
+}
+
+note::note(samp sample) {
+    std::cout<<"length: "<<sample.N<<"\n"; 
+    std::cout<<"channels: "<<sample.chn<<"\n"; 
+    read_p = 0;
+    N = sample.N;
+
+}
+
+int note::towrite(int buflen) {
+	if((this->N-read_p) < buflen) {
+		return this->N-read_p;
+	} else {
+		return buflen;
+	}
+}
+
+void note::set_length(long len) {
+	this->N = len;
+}
+int note::get_read_p(int n) {
+	read_p++;
+	return read_p;
+}
+
+bool note::del() {
+    if (read_p < this->N) {
+        return false;
+    } else { 
+        return true;
+    }
+}
+
+long note::get_len() {
+	return N;
+}

@@ -53,6 +53,7 @@ public:
 	float* out_buf;
 
 	float* file_buf;	
+	int file_fs;
 	long file_len;
 	int file_chn;
 

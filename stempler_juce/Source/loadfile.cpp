@@ -2,15 +2,66 @@
 #include <fstream>
 #include <cmath>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "loadfile.h"
 
-int loadfile(const juce::String filepath, float* data, unsigned long int* N, int* ch, int* fs) {
+samp loadfile(const juce::String filepath) { 
+
+    SF_INFO in_info;
+    SNDFILE* in_file;
+
+ int i=0;
+    while(filepath[i] != '\0') {
+			printf("%c\n", filepath[i]);
+        i++;
+    }
+
+	char* fp = new char[i]; 
+     i = 0;
+	printf("start reading\n");
+    while(filepath[i] != '\0') {
+			printf("%c\n", filepath[i]);
+        fp[i] = (const char) filepath[i];
+        i++;
+    }
+	printf("start reading\n");
+	in_file = sf_open(fp, SFM_READ, &in_info);
+    
+	unsigned long int num_frames = in_info.frames;
+    int chn_num = in_info.channels;
+
+	float* buffer = new float[num_frames*chn_num];
+    bool read = false; int tries = 0;
+    while((read != true) && (tries < 10)) {
+        unsigned long int frames_read = sf_readf_float(in_file, buffer, num_frames);
+
+    	if(frames_read != num_frames) {
+            printf("\nerror read: %li of %li\n", frames_read, num_frames);
+			if(tries == 10) {
+				exit(-1);
+			}
+        } else {
+            read = true;
+        }
+        tries++;
+		
+    }
+
+    
+	samp out;
+	out.data = buffer;
+	out.N = num_frames;
+	out.chn = chn_num;
+	return out;
+}
+/*	
+
+int loadfile(const juce::String filepath, unsigned long int* N, float* data, int* ch, int* fs) {
     int err = -1;
 
     SF_INFO in_info;
     SNDFILE* in_file;
     int i=0;
     while(filepath[i] != '\0') {
-        printf("outp: %c\n", filepath[i]);
         i++;
     }
     char* fp; 
@@ -25,19 +76,18 @@ int loadfile(const juce::String filepath, float* data, unsigned long int* N, int
     int chn_num = in_info.channels;
 
     float buf[num_frames*chn_num];
-    printf("\npoint!\n");
     unsigned long int frames_read = sf_readf_float(in_file, buf, num_frames);
     if(frames_read != num_frames) {
         printf("\nerror read: %li of %li\n", frames_read, num_frames);
-    }    
-    *N = num_frames;
-    *ch = chn_num;
-    printf("writing float\n");
+    }   
     data = new float[num_frames*chn_num];
     for(unsigned long int n=0; n<num_frames*chn_num; n++) {
         data[n] = buf[n];
     }
+    *N = num_frames;
+    *ch = chn_num;
     err = 0;
     exit:
     return err;
 } 
+*/

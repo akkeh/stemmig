@@ -2,6 +2,17 @@
 #include <fstream>
 #include <cmath>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MainComponent.h"
+#ifndef LOADF_H_
+#define LOADF_H_
 
-int loadfile(const juce::String filepath, float* data, unsigned long int* N, int* ch, int* fs);
+typedef struct {
+	float* data;
+	unsigned long int N;
+	int chn;
+} samp;
+
+
+samp loadfile(const juce::String filepath);
  
+#endif
